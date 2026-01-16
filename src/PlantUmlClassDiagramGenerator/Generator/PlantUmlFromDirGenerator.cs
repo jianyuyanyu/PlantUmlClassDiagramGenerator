@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -106,8 +106,10 @@ public class PlantUmlFromDirGenerator: IPlantUmlGenerator
                 }
                 else
                 {
-                    var newRoot = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @".\" : @".";
-                    includeRefs.AppendLine("!include " + outputFile.Replace(outputRoot, newRoot));
+                    var root = outputRoot.EndsWith(Path.DirectorySeparatorChar) ? outputRoot.TrimEnd(Path.DirectorySeparatorChar) : outputRoot;
+                    var relativePath = outputFile.Replace(root, ".");
+                    // PlantUML's !include directive requires forward slashes for cross-platform compatibility
+                    includeRefs.AppendLine("!include " + relativePath.Replace('\\', '/'));
                 }
             }
             catch (Exception e)
